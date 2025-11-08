@@ -5,7 +5,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -510,6 +510,110 @@ function ChartCard({
 }
 
 function MapCard({ timePeriod }: { timePeriod: TimePeriod }) {
+  const mapRef = useRef<any>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const heatLayerRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !containerRef.current) return;
+
+    // Dynamic imports for client-side only
+    const initMap = async () => {
+      const L = (await import('leaflet')).default;
+      await import('leaflet.heat');
+
+      // Clean up existing map
+      if (mapRef.current) {
+        mapRef.current.remove();
+      }
+
+      // Initialize map
+      const map = L.map(containerRef.current!, {
+        center: [37.7749, -122.4194],
+        zoom: 12,
+        zoomControl: false,
+        attributionControl: false,
+        preferCanvas: true,
+      });
+
+      // Add dark tile layer - using CartoDB Dark Matter (100% free, no API key)
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        maxZoom: 19,
+        attribution: '',
+        subdomains: 'abcd'
+      }).addTo(map);
+      
+      // Alternative ultra-dark option (if you want pitch black background):
+      // L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png', { ... })
+      // 
+      // Or Stadia Maps (requires free account for production):
+      // L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', { ... })
+
+      // Generate realistic emergency call heatmap data around SF
+      const heatData: [number, number, number][] = [];
+      
+      // High-density zones (downtown, tenderloin, mission)
+      const hotspots = [
+        { lat: 37.7849, lng: -122.4094, count: 15 }, // Downtown
+        { lat: 37.7849, lng: -122.4194, count: 18 }, // Tenderloin
+        { lat: 37.7599, lng: -122.4148, count: 12 }, // Mission
+        { lat: 37.7694, lng: -122.4862, count: 10 }, // Sunset
+        { lat: 37.7294, lng: -122.4862, count: 8 },  // Parkside
+        { lat: 37.7999, lng: -122.3999, count: 14 }, // Financial District
+        { lat: 37.7749, lng: -122.4394, count: 11 }, // Hayes Valley
+        { lat: 37.7599, lng: -122.3848, count: 9 },  // Potrero
+      ];
+
+      hotspots.forEach(spot => {
+        for (let i = 0; i < spot.count; i++) {
+          // Add random scatter around hotspot
+          const lat = spot.lat + (Math.random() - 0.5) * 0.02;
+          const lng = spot.lng + (Math.random() - 0.5) * 0.02;
+          const intensity = 0.5 + Math.random() * 0.5; // 0.5 to 1.0
+          heatData.push([lat, lng, intensity]);
+        }
+      });
+
+      // Add random scattered calls across the city
+      for (let i = 0; i < 50; i++) {
+        const lat = 37.7749 + (Math.random() - 0.5) * 0.1;
+        const lng = -122.4194 + (Math.random() - 0.5) * 0.15;
+        const intensity = Math.random() * 0.5; // 0 to 0.5
+        heatData.push([lat, lng, intensity]);
+      }
+
+      // Create heat layer with vibrant neon gradient
+      const heat = (L as any).heatLayer(heatData, {
+        radius: 30,
+        blur: 20,
+        maxZoom: 17,
+        max: 1.0,
+        minOpacity: 0.3,
+        gradient: {
+          0.0: 'rgba(0, 0, 0, 0)',
+          0.2: 'rgba(0, 100, 255, 0.8)',   // Deep blue
+          0.3: 'rgba(0, 200, 255, 0.9)',   // Cyan
+          0.5: 'rgba(0, 255, 100, 0.9)',   // Bright green
+          0.7: 'rgba(255, 255, 0, 0.95)',  // Yellow
+          0.85: 'rgba(255, 150, 0, 1)',    // Orange
+          1.0: 'rgba(255, 0, 0, 1)'        // Red
+        }
+      }).addTo(map);
+
+      mapRef.current = map;
+      heatLayerRef.current = heat;
+    };
+
+    initMap();
+
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    };
+  }, [timePeriod]);
+
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
       <div className="flex items-center justify-between p-4 border-b border-gray-800">
@@ -538,58 +642,13 @@ function MapCard({ timePeriod }: { timePeriod: TimePeriod }) {
         <div className="text-xs text-gray-500 mb-1">Frequency</div>
         <div className="flex items-center gap-2">
           <span className="text-xs">Low</span>
-          <div className="flex-1 h-2 rounded-full bg-gradient-to-r from-blue-500 via-green-500 via-yellow-500 via-orange-500 to-red-500" />
+          <div className="flex-1 h-2 rounded-full bg-gradient-to-r from-blue-500 via-cyan-500 via-green-500 via-yellow-500 via-orange-500 to-red-500" />
           <span className="text-xs">High</span>
         </div>
       </div>
 
-      {/* Map with Heatmap Overlay */}
-      <div className="h-80 bg-gray-800 relative overflow-hidden">
-        <img
-          src="https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/-122.4194,37.7749,10/800x600@2x?access_token=pk.eyJ1IjoiZXhhbXBsZSIsImEiOiJjbGV4YW1wbGUifQ.example"
-          alt="Heat map"
-          className="w-full h-full object-cover opacity-40"
-          onError={(e) => {
-            e.currentTarget.style.display = 'none';
-          }}
-        />
-        {/* Heatmap Overlay */}
-        <svg className="absolute inset-0 w-full h-full" style={{ mixBlendMode: 'screen' }}>
-          <defs>
-            {/* Radial gradient for heat spots */}
-            <radialGradient id="heat1">
-              <stop offset="0%" stopColor="rgba(255,0,0,0.8)" />
-              <stop offset="30%" stopColor="rgba(255,100,0,0.6)" />
-              <stop offset="60%" stopColor="rgba(255,200,0,0.3)" />
-              <stop offset="100%" stopColor="rgba(0,255,0,0)" />
-            </radialGradient>
-            <radialGradient id="heat2">
-              <stop offset="0%" stopColor="rgba(255,50,0,0.7)" />
-              <stop offset="40%" stopColor="rgba(200,150,0,0.4)" />
-              <stop offset="80%" stopColor="rgba(100,200,0,0.2)" />
-              <stop offset="100%" stopColor="rgba(0,0,255,0)" />
-            </radialGradient>
-            <radialGradient id="heat3">
-              <stop offset="0%" stopColor="rgba(255,100,0,0.6)" />
-              <stop offset="50%" stopColor="rgba(150,200,0,0.3)" />
-              <stop offset="100%" stopColor="rgba(0,150,255,0)" />
-            </radialGradient>
-          </defs>
-          {/* Multiple heat spots */}
-          <circle cx="20%" cy="30%" r="80" fill="url(#heat1)" />
-          <circle cx="35%" cy="45%" r="100" fill="url(#heat2)" />
-          <circle cx="60%" cy="35%" r="90" fill="url(#heat1)" />
-          <circle cx="75%" cy="55%" r="110" fill="url(#heat2)" />
-          <circle cx="50%" cy="60%" r="70" fill="url(#heat3)" />
-          <circle cx="85%" cy="40%" r="95" fill="url(#heat1)" />
-          <circle cx="15%" cy="70%" r="85" fill="url(#heat3)" />
-          <circle cx="45%" cy="25%" r="75" fill="url(#heat2)" />
-          <circle cx="70%" cy="75%" r="100" fill="url(#heat1)" />
-          <circle cx="30%" cy="80%" r="80" fill="url(#heat3)" />
-          <circle cx="90%" cy="65%" r="90" fill="url(#heat2)" />
-          <circle cx="55%" cy="50%" r="95" fill="url(#heat1)" />
-        </svg>
-      </div>
+      {/* Leaflet Heatmap */}
+      <div ref={containerRef} className="h-80 bg-black relative" style={{ filter: 'brightness(0.85) contrast(1.2)' }} />
     </div>
   );
 }

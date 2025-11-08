@@ -38,10 +38,12 @@ import {
   ClipboardCheck,
   Settings,
   Database,
+  ClipboardList,
 } from 'lucide-react';
 import StartEmergencyCall from '@/components/StartEmergencyCall';
 import IncidentWorkflowOverlay from '@/components/IncidentWorkflowOverlay';
 import DataManagementDashboard from '@/components/DataManagementDashboard';
+import { useRouter } from 'next/navigation';
 
 // Dynamic map import
 const EmergencyMap = dynamic(() => import('@/components/EmergencyMap').then((mod) => mod.default), {
@@ -57,6 +59,7 @@ const EmergencyMap = dynamic(() => import('@/components/EmergencyMap').then((mod
 }) as any;
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [calls, setCalls] = useState<EmergencyCall[]>([]);
   const [selectedCallId, setSelectedCallId] = useState<string | null>(null);
   const [view, setView] = useState<'emergencies' | 'alerts'>('emergencies');
@@ -200,6 +203,15 @@ export default function DashboardPage() {
               title="Data Management"
             >
               <Database className="w-5 h-5" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="text-gray-500 hover:text-white" 
+              onClick={() => router.push('/call-history')}
+              title="Call History"
+            >
+              <ClipboardList className="w-5 h-5" />
             </Button>
             <Button variant="ghost" size="icon" className="text-gray-500 hover:text-white" title="Reports">
               <ClipboardCheck className="w-5 h-5" />
