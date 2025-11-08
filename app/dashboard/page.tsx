@@ -252,7 +252,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Search */}
-          <div className="px-4 py-3 border-b border-gray-800 flex gap-2">
+          <div className="px-4 py-3 border-b border-gray-800 flex gap-2 text-black">
             <Input
               placeholder="Search a location"
               className="flex-1 bg-gray-800 border-gray-700 text-sm h-9"
@@ -593,7 +593,7 @@ export default function DashboardPage() {
             </ScrollArea>
 
             {/* Action Buttons */}
-            <div className="p-4 border-t border-gray-800 flex gap-2">
+            <div className="p-4 border-t border-gray-800 flex gap-2 text-black">
               <Button variant="outline" className="flex-1">
                 Transfer
               </Button>
@@ -783,7 +783,7 @@ export default function DashboardPage() {
           </ScrollArea>
 
           {/* Modulus Panel */}
-          <div className="p-3 border-t border-gray-800">
+          <div className="p-3 border-t border-gray-800 text-black">
             <div className="text-xs text-gray-500 mb-2">Modulus Panel</div>
             <div className="flex gap-2">
               <Button size="sm" variant="outline" className="flex-1 h-10">
