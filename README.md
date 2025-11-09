@@ -1,8 +1,9 @@
-# Pulse112 - Emergency Response Platform
-
 <p align="center">
   <img src="./app/favicon.ico" alt="Pulse112 Icon" width="96" />
 </p>
+
+# Pulse112 - Emergency Response Platform
+
 
 **Demo Pitch Deck:** [Pulse112 Canva Presentation](https://www.canva.com/design/DAG4Lk5u0ks/47McT_9zrhAOyyPDFTwzRw/edit)  
 **Product Demo Video:** [YouTube Walkthrough](https://youtu.be/dfOUkR4HiP4)
@@ -448,7 +449,7 @@ const triageData = JSON.parse(response.choices[0].message.content);
 
 #### Current Implementation (Embedded Demo)
 
-Currently, KWIK embeds the Hume EVI demo site as an iframe:
+Currently, Pulse embeds the Hume EVI demo site as an iframe:
 
 ```typescript
 // components/StartEmergencyCall.tsx
@@ -926,7 +927,7 @@ const emergencyCall = {
 ## 📁 Project Structure
 
 ```
-kwik/
+112-Emergency/
 ├── app/
 │   ├── layout.tsx                 # Root layout (metadata, fonts)
 │   ├── page.tsx                   # Landing page (redirects to dashboard)
@@ -1119,7 +1120,7 @@ The app includes extensive console logging for debugging:
 
 ```javascript
 // In browser console
-localStorage.getItem('kwik_emergency_calls');
+localStorage.getItem('pulse112_emergency_calls');
 ```
 
 ---
@@ -1138,7 +1139,7 @@ Vercel provides the best experience for Next.js apps.
 git init
 git add .
 git commit -m "Initial commit"
-git remote add origin https://github.com/yourusername/kwik.git
+git remote add origin https://github.com/sudhansu-24/112-Emergency
 git push -u origin main
 ```
 
@@ -1201,8 +1202,8 @@ CMD ["npm", "start"]
 ```
 
 ```bash
-docker build -t kwik .
-docker run -p 3000:3000 kwik
+docker build -t pulse112 .
+docker run -p 3000:3000 pulse112
 ```
 
 ---
@@ -1316,9 +1317,9 @@ SOFTWARE.
 
 For questions or support:
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/kwik/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/kwik/discussions)
-- **Email**: your-email@example.com
+- **Issues**: [GitHub Issues](https://github.com/sudhansu-24/112-Emergencyissues)
+- **Discussions**: [GitHub Discussions](https://github.com/sudhansu-24/112-Emergencydiscussions)
+- **Email**: ssssprusty98@gmail.com
 
 ---
 
@@ -1326,6 +1327,6 @@ For questions or support:
 
 **Built with ❤️ for emergency response innovation**
 
-[⭐ Star this repo](https://github.com/yourusername/kwik) | [🐛 Report Bug](https://github.com/yourusername/kwik/issues) | [✨ Request Feature](https://github.com/yourusername/kwik/issues)
+[⭐ Star this repo](https://github.com/sudhansu-24/112-Emergency) | [🐛 Report Bug](https://github.com/sudhansu-24/112-Emergency/issues) | [✨ Request Feature](https://github.com/sudhansu-24/112-Emergencyissues)
 
 </div>
