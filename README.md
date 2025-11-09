@@ -174,8 +174,8 @@ Each capture reflects the New Delhi–focused deployment:
 1. **Clone the repository**:
 
 ```bash
-git clone https://github.com/yourusername/kwik.git
-cd kwik
+git clone https://github.com/sudhansu-24/112-Emergency
+cd 112-Emergency
 ```
 
 2. **Install dependencies**:
