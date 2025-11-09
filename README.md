@@ -1,4 +1,4 @@
-# 112 - 🚨 Pulse112 - Emergency Response Platform
+# Pulse112 - Emergency Response Platform
 
 **AI-Powered Emergency Dispatch System** combining real-time voice triage, emotion detection, and carrier-grade location services.
 
